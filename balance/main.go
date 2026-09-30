@@ -3,13 +3,23 @@ package main
 import (
 
 	"fmt"
+	"sync"
+	//"time"
+	//"net"
+
 
 )
 
+func connect_user(user int, port string) {
+
+}
+
+
 func main() {
 
+	var wg sync.WaitGroup
+
 	var users_to_split int
-	//var servers int
 
 	server_8080 := []int{}
 	server_8081 := []int{}
@@ -42,10 +52,37 @@ func main() {
 	fmt.Println(server_8081)
 	fmt.Println(server_8082)
 
-
-	// -- FOR LOOPS TO CONNECT ALL USERS TO SERVERS || PORTS -- //
-
 	
+	// -- At the end of the program wait for goroutines to end -- //
+	defer wg.Wait()
+	
+	// -- FOR loops for connection to the server -- //
+	// -- 1ST FOR LOOP -- //
+	for _, user := range server_8080 {
+		wg.Add(1)
+		go func (user int) {
+			defer wg.Done()
+			connect_user(user, "8080")
+		}(user)
+	}
 
+	// -- 2ND FOR LOOP -- //
+	for _, user := range server_8081 {
+		wg.Add(1)
+		go func(user){
+			defer wg.Done()
+			connect_user(user, "8081")
+		}(user)
+	}
+
+	// -- 3RD FOR LOOP -- // 
+	for _, user := range server_8082 {
+		wg.Add(1)
+		go func(user int) {
+			defer wg.Done()
+			connect_user(user, "8082")
+		}(user)
+	}
+	// -- ALL USERS "CONNECTED" -- //
 
 }
