@@ -28,6 +28,8 @@ when y is slice this for loop just goes on and on getting x the value of y[HowMa
 when using with strings it always gets the character instead of int just like in C
 
 
+
+
 ^^ SIDE NOTES ^^
 
 

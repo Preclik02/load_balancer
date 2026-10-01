@@ -12,6 +12,10 @@ import (
 
 func connect_user(user int, port string) {
 
+	// -- CONNECTING A USER TO A SERVER (IN THIS CASE A PORT) -- //
+	
+
+
 }
 
 
