@@ -2,44 +2,90 @@ package main
 
 import( 
 
-	"fmt"
-	"net/http"
+	"log"
+	"sync"
+	"net"
 
 )
 
-func h8080(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello")
-}
-func h8081(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello")
-}
-func h8082(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello")
-}
 
 func main() {
 
-	serverMuxA := http.NewServeMux()
-	serverMuxA.HandleFunc("/", h8080)
+	var wg sync.WaitGroup
+	
+	defer wg.Wait()
 
 
-	serverMuxB := http.NewServeMux()
-	serverMuxB.HandleFunc("/", h8081)
-
-
-	serverMuxC := http.NewServeMux()
-	serverMuxC.HandleFunc("/", h8082)
-
-
+	// -- "SERVER" 8080 WITH TCP LISTENING -- //
+	wg.Add(1)
 	go func() {
-		fmt.Println("8080")
-		http.ListenAndServe(":8080", serverMuxA)
+		defer wg.Done()
+		listener, err := net.Listen("tcp", ":8080")
+		if err != nil {
+			log.Printf("[+] err - %s\n", err)	
+			return 
+		}
+		defer listener.Close()
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				log.Printf("[+] err - %s\n", err)
+				continue
+			}
+			go func(c net.Conn) {
+				defer c.Close()
+				c.Write([]byte("Hello 8080"))
+			}(conn)
+		}
 	}()
-	go func() {
-		fmt.Println("8081")
-		http.ListenAndServe(":8081", serverMuxB)
-	}()
-	fmt.Println("8082")
-	http.ListenAndServe(":8082", serverMuxC)
 
+	// -- "SERVER" 8081 WITH TCP LISTENING -- //
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		listener, err := net.Listen("tcp", ":8081")
+		if err != nil {
+			log.Printf("[+] err - %s\n", err)
+			return
+		}
+		defer listener.Close()
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				log.Printf("[+] err - %s\n", err)
+				continue
+			}
+			go func(c net.Conn) {
+				defer c.Close()
+				c.Write([]byte("Hello 8081"))
+			}(conn)
+
+		}
+	}()
+
+
+	// -- "SERVER" 8082 WITH TCP LISTENING -- //
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		listener, err := net.Listen("tcp", ":8082")
+		if err != nil {
+			log.Printf("[+] err - %s\n", err)
+			return
+		}
+		defer listener.Close()
+		for {
+
+			conn, err := listener.Accept()
+			if err != nil {
+				log.Printf("[+] err - %s\n", err)
+				continue
+			}
+			go func(c net.Conn) {
+				defer c.Close()
+				c.Write([]byte("Hello 8082"))
+			}(conn)
+
+		}
+	}()
 }

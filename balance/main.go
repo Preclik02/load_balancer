@@ -2,10 +2,10 @@ package main
 
 import (
 
+	"flag"
 	"fmt"
 	"sync"
-	//"time"
-	//"net"
+	"net"
 
 
 )
@@ -13,8 +13,15 @@ import (
 func connect_user(user int, port string) {
 
 	// -- CONNECTING A USER TO A SERVER (IN THIS CASE A PORT) -- //
-	
+	conn, err := net.Dial("tcp", "localhost:"+port)
+	if err != nil {
+		fmt.Printf("[+] An error happened when connecting user %d to port %s\n", user, port)
+		return
+	}
 
+	defer conn.Close()
+
+	fmt.Printf("[+] User %d connected successfully to port %s\n", user, port)
 
 }
 
@@ -73,7 +80,7 @@ func main() {
 	// -- 2ND FOR LOOP -- //
 	for _, user := range server_8081 {
 		wg.Add(1)
-		go func(user){
+		go func(user int){
 			defer wg.Done()
 			connect_user(user, "8081")
 		}(user)

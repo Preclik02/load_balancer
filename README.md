@@ -27,6 +27,28 @@ we assume that y is a slice or string
 when y is slice this for loop just goes on and on getting x the value of y[HowManyTimesRuned] it is quite usefull when dealing with slices or arrays or taking apart strings into characters
 when using with strings it always gets the character instead of int just like in C
 
+In the connect_user function we use the net package or library of go to use command conn and net.Dial which connect the potencial user to the server or in this case a port on localhost as specified in net.Dial for the UserID I have now noticed that it is completely useless and we use it just for debuging or loging when an error happens I might actually remove this sometimes I feel like its a bit too useless but I guess I will use it for now 
+
+usage of net.Dial is pretty simple you have to just make sure you do
+conn, _ := net.Dial()
+you don't have to make the error checking if you don't want in the () you just specify the type of traffic you want to make or connection sorry and to where to connecto to in our case its "localhost:"+port also you wan to make sure to conn.Close() at the end of your session preferably with defer
+
+you can run functions as goroutines also doing so with "go" keyword before executing the function like so
+go function_name()
+
+return keyword is for exiting the function not the whole code
+
+you can define keywords as you like or exapmle when defining goroutine doing as in the root main.go "go func (c net.Conn)" now in the go function I can use "c" as the alias for "net.Conn" this can be pretty handy 
+
+set your goroutines wg.Done() at the start of the function with defer to make it easier to use it wrongly
+
+when error handeling we have to use "if err != nil" because we are taking it as an error when the error is not empty if the error was empty there was no error
+
+the TCP servers or ports - the tcp servers are listening in 3 goroutines 1 for each port [8080, 8081, 8082] we do defer wg.Done() to mark the goroutine as done when it finishes, than we make it listen with net.Listen and error check with log.Printf("%s", err) and we return if any eror happens so it doesn't do it agian blindly, than we make sure the listener ends at the end of the program by doing defer litener.Close() than we make for loop to listen for all the actual connections in this for loop we made the listener accept connections and made a simple error loging as we did before but with continue this time since the error just means there is no client to satisfy so we continue the for loop, than we have a goroutine that defines c as net.Conn which acts kinda like an alias for it and we ensure the net.Conn ends with defer c.Close() and than we write on the page with c.Write([]byte("")) the []byte is a slice of byte and the byte is specified in ("") than we make sure the goroutine is using the newest accepted connection with the (conn) at the end of the goroutine defining and we do this code copy paste 3 times for 3 ports and we are done when we launch this script it listens for the TCP connections on those ports than we can run tho balance/main.go that will simulate the users splited into 3 slices connecting to 3 servers we use real connections but not real servers and users
+
+flags flags are imported by "flags" in the import () they can be used on every type of variable in GO I think but you have to specify every of them before, for example if I would wanted to run my program with flag named "users" with value of 4 I would have do "go run main.go -users=4" how does it work under the hood is quite simple, you have to make a variable like users with the flag.Int() so full exapmle of usage is
+users := flag.Int("users", 0, "int")
+so in the () the "users" means the flag will be called users so it knows when I do -users=... it knows it has to asign ... to users the 0 means the default value if the user does not specify this number so I like to use 0 there, the "int" means that when user does flag -h it means I think -help so like it prints all the capable flags you can use when running this program so in this case it prints that the flag "users" wants an int input 
 
 
 
