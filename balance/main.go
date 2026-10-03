@@ -30,19 +30,17 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	var users_to_split int
-
 	server_8080 := []int{}
 	server_8081 := []int{}
 	server_8082 := []int{}
 
-	fmt.Printf("[-] How much users >> ")
-	fmt.Scan(&users_to_split)
+	users_to_split := flag.Int("users", 0, "int")
 
+	flag.Parse()
 
 	// -- SELECTING SERVER FOR EACH USER -- // 
 	selected_server := -1
-	for i := 0; i < users_to_split; i++ {
+	for i := 0; i < *users_to_split; i++ {
 	
 		selected_server += 1
 		switch {

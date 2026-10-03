@@ -48,7 +48,9 @@ the TCP servers or ports - the tcp servers are listening in 3 goroutines 1 for e
 
 flags flags are imported by "flags" in the import () they can be used on every type of variable in GO I think but you have to specify every of them before, for example if I would wanted to run my program with flag named "users" with value of 4 I would have do "go run main.go -users=4" how does it work under the hood is quite simple, you have to make a variable like users with the flag.Int() so full exapmle of usage is
 users := flag.Int("users", 0, "int")
-so in the () the "users" means the flag will be called users so it knows when I do -users=... it knows it has to asign ... to users the 0 means the default value if the user does not specify this number so I like to use 0 there, the "int" means that when user does flag -h it means I think -help so like it prints all the capable flags you can use when running this program so in this case it prints that the flag "users" wants an int input 
+so in the () the "users" means the flag will be called users so it knows when I do -users=... it knows it has to asign ... to users the 0 means the default value if the user does not specify this number so I like to use 0 there, the "int" means that when user does flag -h it means I think -help so like it prints all the capable flags you can use when running this program so in this case it prints that the flag "users" wants an int input. Before you use the flags as the variables you have to do
+flag.Parse()
+so the flags are actually usable as the variables
 
 
 
