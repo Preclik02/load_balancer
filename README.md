@@ -22,7 +22,7 @@ go func(x int, y int) {
 This example makes the function have variables (int) x, y which are defined as 10, 20 at the end so we can use them like this
 
 Keyword "Range" this keyword can be used like so
-for _, x := Range y
+for _, x := range y
 we assume that y is a slice or string
 when y is slice this for loop just goes on and on getting x the value of y[HowManyTimesRuned] it is quite usefull when dealing with slices or arrays or taking apart strings into characters
 when using with strings it always gets the character instead of int just like in C
@@ -52,6 +52,11 @@ so in the () the "users" means the flag will be called users so it knows when I 
 flag.Parse()
 so the flags are actually usable as the variables
 
+in the function check_server we get 2 variables there server (or port) and timeout the server is defined as string variable which contains in this case one of the ports like "8080" the timeout is a time variable as you can see it is defined as type time.Duration which means it conains time inside this function we can see
+conn, err := net.DialTimeout("tcp", "localhost:"+server, timeout)
+as we could probably tell we call net function "DialTimeout" which probing or checking the server if it is up and responding in some time in our case it is defined as timeout variable (later specified as 500ms) than we can see the 1st thing we define in this function is the addres of this server which could be some ip addres or as in our case a localhost port, as the 1st thing to define is the type of connection the function tries to make in our case that is "TCP" as always we are than checking if the err variable was empty or not and returning 0 if it wasn't than making sure the connection shuts down after we made sure it was even up
+
+when calling function server_check and using it in our program we made a for loop using i and servers variable servers is a slice with all the servers that could be used and i is new variable that holds the value of servers[HowManyTimesRuned] we use the keyword range there as we specified earlier this can be handy when making certain types of loops than we check if the function returns 0 or 1 with earch server if it returns 0 that means the server is down and not responding within 500ms as we specify when calling tis function if the function returns 1 which means the server is up and responding we add the server or "i" into healthy_servers which how the name hints holds all the responding servers
 
 
 ^^ SIDE NOTES ^^

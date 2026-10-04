@@ -6,9 +6,19 @@ import (
 	"fmt"
 	"sync"
 	"net"
-
+	"time"
 
 )
+
+func check_server(server string, timeout time.Duration) int {
+
+	conn, err := net.DialTimeout("tcp", "localhost:"+server, timeout)
+	if err != nil {
+		return 0
+	}
+	defer conn.Close()
+	return 1
+}
 
 func connect_user(user int, port string) {
 
@@ -34,9 +44,24 @@ func main() {
 	server_8081 := []int{}
 	server_8082 := []int{}
 
+	servers := []string{"8080", "8081", "8082"}
+	healthy_servers := []string{ }
+
 	users_to_split := flag.Int("users", 0, "int")
+	
 
 	flag.Parse()
+
+
+	for _, i := range servers {
+		
+		if check_server(i, 500 * time.Millisecond) == 0 {
+			fmt.Printf("[+] Server %s is down\n", i)
+		} else if check_server(i, 500 * time.Millisecond) == 1 {
+			healthy_servers = append(healthy_servers, i) 
+			fmt.Printf("[+] Server %s is up\n", i)
+		}
+	}
 
 	// -- SELECTING SERVER FOR EACH USER -- // 
 	selected_server := -1
