@@ -8,7 +8,28 @@ import(
 
 )
 
-
+func make_server_listen(server string, wg *sync.WaitGroup) {
+	go func() {
+		defer wg.Done()
+		listener, err := net.Listen("tcp", ":"+server)
+		if err != nil {
+			log.Printf("[+] err - %s\n", err)	
+			return
+		}
+		defer listener.Close()
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				log.Printf("[+] err - %s\n", err)
+				continue
+			}
+			go func(c net.Conn) {
+				defer c.Close()
+				c.Write([]byte("Hello "+server))
+			}(conn)
+		}
+	}()
+}
 func main() {
 
 	var wg sync.WaitGroup
@@ -18,74 +39,13 @@ func main() {
 
 	// -- "SERVER" 8080 WITH TCP LISTENING -- //
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		listener, err := net.Listen("tcp", ":8080")
-		if err != nil {
-			log.Printf("[+] err - %s\n", err)	
-			return 
-		}
-		defer listener.Close()
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Printf("[+] err - %s\n", err)
-				continue
-			}
-			go func(c net.Conn) {
-				defer c.Close()
-				c.Write([]byte("Hello 8080"))
-			}(conn)
-		}
-	}()
+	make_server_listen("8080", &wg)
 
 	// -- "SERVER" 8081 WITH TCP LISTENING -- //
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		listener, err := net.Listen("tcp", ":8081")
-		if err != nil {
-			log.Printf("[+] err - %s\n", err)
-			return
-		}
-		defer listener.Close()
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Printf("[+] err - %s\n", err)
-				continue
-			}
-			go func(c net.Conn) {
-				defer c.Close()
-				c.Write([]byte("Hello 8081"))
-			}(conn)
-
-		}
-	}()
-
+	make_server_listen("8081", &wg)
 
 	// -- "SERVER" 8082 WITH TCP LISTENING -- //
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		listener, err := net.Listen("tcp", ":8082")
-		if err != nil {
-			log.Printf("[+] err - %s\n", err)
-			return
-		}
-		defer listener.Close()
-		for {
-
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Printf("[+] err - %s\n", err)
-				continue
-			}
-			go func(c net.Conn) {
-				defer c.Close()
-				c.Write([]byte("Hello 8082"))
-			}(conn)
-
-		}
-	}()
+	make_server_listen("8082", &wg)
 }
