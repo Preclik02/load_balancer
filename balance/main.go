@@ -2,6 +2,10 @@ package main
 
 import (
 
+	"strconv"
+	"strings"
+	"os"
+	"log"
 	"flag"
 	"fmt"
 	"sync"
@@ -65,12 +69,27 @@ func connect_user(user int, port string) {
 func main() {
 
 	var wg sync.WaitGroup
-
+/*
 	server_8080 := []int{}
 	server_8081 := []int{}
 	server_8082 := []int{}
-
 	servers := []string{"8080", "8081", "8082"}
+*/
+	server_count_temp, err := os.ReadFile("server_count")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// -- CONVERTING THE os.ReadFile INTO INT -- //
+	server_count_string := strings.TrimSpace(string(server_count_temp))
+	server_count, err := strconv.Atoi(server_count_string)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var servers [][server_count]int
+
+
+
 	healthy_servers := []string{ }
 	var healthy_servers_int int
 

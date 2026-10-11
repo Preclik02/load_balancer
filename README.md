@@ -80,8 +80,20 @@ now I am relising one "flaw" with this structure and that is that the server row
 x = strconv.Itoa(y[0])
 which means x is eaqual to the y[0] but in string since "Itoa" means "Int to ASCII" and strconv is the keyword for calling that function the y[0] is just the value so before using the variable as a string we can make it a string from int using this 
 
+reading files is pretty easy, or at least in our case, we have to import os and log and just do
+data, err := os.ReadFile("filename")
+if err != nil {
+    log.Fatal(err)
+}
+and now the variable data is %s of the file so we can work with that. For writing data into a file in our case it is also pretty straight forward like so:
+data := []byte("Hello world")
+err := os.WriteFile("filename", data, 0644)
+// error handling // 
+in our case there is a proble where we have pointer int and we need it into a string we can do that by doing fmt.Sprintf("%d", data) into the byte slice
 
+converting os.ReadFile into int is pretty complex process or at least I see it as too much complex than it should be since you have to read the file with os.ReadFile than convert it into string using strings.TrimSpace that will delete any new lines or spaces 
 
+so the commit will happen now when I have in progress this update to dynamic servers - the program doesn't even compile now so that is yet to fix the reason for not getting it ready now or in the next commit is I have told myself I will do every day commits and the 2nd thing is I have to sleep for school now and I want good sleep since there are tests waiting for me tomorrow
 
 ^^ SIDE NOTES ^^
 
