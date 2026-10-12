@@ -45,11 +45,14 @@ func main() {
 	flag.Parse()
 	
 	data_to_file := []byte(fmt.Sprintf("%d", *servers_to_run))
-	err := os.WriteFile("balance/server_count", data_to_file, 0644)
+	err := os.WriteFile("balance/servers_count", data_to_file, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	if *servers_to_run > 999 {
+		return
+	}
 
 	/////////////////////////////////////
 	// -- RUN SERVERS IN A FOR LOOP -- //

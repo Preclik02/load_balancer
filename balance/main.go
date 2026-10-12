@@ -1,8 +1,7 @@
 package main
-
-import (
-
-	"strconv"
+import ( 
+	
+	"strconv" 
 	"strings"
 	"os"
 	"log"
@@ -67,29 +66,26 @@ func connect_user(user int, port string) {
 
 
 func main() {
-
+	
 	var wg sync.WaitGroup
-/*
-	server_8080 := []int{}
-	server_8081 := []int{}
-	server_8082 := []int{}
-	servers := []string{"8080", "8081", "8082"}
-*/
-	server_count_temp, err := os.ReadFile("server_count")
+	servers_count_temp, err := os.ReadFile("servers_count")
 	if err != nil {
 		log.Fatal(err)
 	}
 	// -- CONVERTING THE os.ReadFile INTO INT -- //
-	server_count_string := strings.TrimSpace(string(server_count_temp))
-	server_count, err := strconv.Atoi(server_count_string)
+	servers_count_string := strings.TrimSpace(string(servers_count_temp))
+	servers_count, err := strconv.Atoi(servers_count_string)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var servers [][server_count]int
-
-
-
+	// -- INITILIZING 2D SLICE -- //
+	var servers [][]int
+	for i := 0; i < servers_count; i++ {
+		row := []int{}
+		servers = append(servers, row)	
+	}
+	
 	healthy_servers := []string{ }
 	var healthy_servers_int int
 
@@ -97,57 +93,47 @@ func main() {
 	
 
 	flag.Parse()
+	
 
 	// -- CHECK SERVERS FUNCTION -- //
-	for _, i := range servers {
+	server_selected := 0 
+	for server_selected := 0; server_selected < servers_count; server_selected ++ {
 		
-		if check_server(i, 500 * time.Millisecond) == 0 {
-			fmt.Printf("[+] Server %s is down\n", i)
-		} else if check_server(i, 500 * time.Millisecond) == 1 {
-			healthy_servers = append(healthy_servers, i) 
+		server_selected_int := server_selected + 8000
+		if check_server(strconv.Itoa(server_selected_int), 500 * time.Millisecond) == 0 {
+			fmt.Printf("[+] Server %s is down\n", strconv.Itoa(server_selected_int))
+		} else if check_server(strconv.Itoa(server_selected_int), 500 * time.Millisecond) == 1 {
+			healthy_servers = append(healthy_servers, strconv.Itoa(server_selected_int)) 
 			healthy_servers_int += 1
-			fmt.Printf("[+] Server %s is up\n", i)
+			fmt.Printf("[+] Server %s is up\n", strconv.Itoa(server_selected_int))
 		}
 	}
 	if healthy_servers_int <= 0 { return }
 	// ^^ CHECKS SERVERS FUNCTION ^^ //
 
 
+
+	//////////////////////////////////////////
 	// -- SELECTING SERVER FOR EACH USER -- // 
-	selected_server := -1
+	server_selected = 0 
 	for i := 0; i < *users_to_split; i++ {
 	
-		selected_server += 1
-		switch {
-		case selected_server == 0:
-			if is_healthy(healthy_servers, "8080") == 1 {
-				server_8080 = append(server_8080, i)
-			} else {
-				i -= 1
-			}
-		case selected_server == 1:
-			if is_healthy(healthy_servers, "8081") == 1 {
-				server_8081 = append(server_8081, i)
-			} else {
-				i -= 1
-			}
-		case selected_server == 2:
-			if is_healthy(healthy_servers, "8082") == 1 {
-				server_8082 = append(server_8082, i)
-			} else {
-				i -= 1
-			}
-			selected_server = -1
-		default:
-			fmt.Println("[+] Error while selecting a server")
+		server_selected_int := server_selected + 8000
+		if is_healthy(healthy_servers, strconv.Itoa(server_selected_int)) == 1 {
+			servers[server_selected] = append(servers[server_selected], i)
+		} else {
+			i -= 1
 		}
-	
-	
-	}
-	fmt.Println(server_8080)
-	fmt.Println(server_8081)
-	fmt.Println(server_8082)
 
+		server_selected += 1
+		
+		if server_selected >= servers_count {
+			server_selected = 0
+		}
+	}
+	for i := 0; i < servers_count; i++ {
+		fmt.Println(servers[i])
+	}
 
 
 
@@ -167,31 +153,17 @@ func main() {
 	
 	// -- FOR loops for connection to the server -- //
 	// -- 1ST FOR LOOP -- //
-	for _, user := range server_8080 {
-		wg.Add(1)
-		go func (user int) {
-			defer wg.Done()
-			connect_user(user, "8080")
-		}(user)
-	}
-
-	// -- 2ND FOR LOOP -- //
-	for _, user := range server_8081 {
-		wg.Add(1)
-		go func(user int){
-			defer wg.Done()
-			connect_user(user, "8081")
-		}(user)
-	}
-
-	// -- 3RD FOR LOOP -- // 
-	for _, user := range server_8082 {
-		wg.Add(1)
-		go func(user int) {
-			defer wg.Done()
-			connect_user(user, "8082")
-		}(user)
+	for server_selected := 0; server_selected < servers_count; server_selected ++ {
+		for _, user := range servers[server_selected] {
+				wg.Add(1)
+				go func (user int) {
+					defer wg.Done()
+					server_selected_int := server_selected + 8000
+					connect_user(user, strconv.Itoa(server_selected_int))
+				}(user)
+		}
 	}
 	// -- ALL USERS "CONNECTED" -- //
-
+	
 }
+
