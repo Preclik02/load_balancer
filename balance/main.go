@@ -75,21 +75,24 @@ func main() {
 	server_8082 := []int{}
 	servers := []string{"8080", "8081", "8082"}
 */
-	server_count_temp, err := os.ReadFile("server_count")
+	servers_count_temp, err := os.ReadFile("servers_count")
 	if err != nil {
 		log.Fatal(err)
 	}
 	// -- CONVERTING THE os.ReadFile INTO INT -- //
-	server_count_string := strings.TrimSpace(string(server_count_temp))
-	server_count, err := strconv.Atoi(server_count_string)
+	servers_count_string := strings.TrimSpace(string(servers_count_temp))
+	servers_count, err := strconv.Atoi(servers_count_string)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var servers [][server_count]int
-
-
-
+	// -- INITILIZING 2D SLICE -- //
+	var servers [][]int
+	for i := 0; i < servers_count; i++ {
+		row := []int{}
+		servers = append(servers, row)	
+	}
+	
 	healthy_servers := []string{ }
 	var healthy_servers_int int
 
