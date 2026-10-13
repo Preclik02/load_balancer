@@ -36,20 +36,24 @@ func make_server_listen(server string, wg *sync.WaitGroup) {
 }
 func main() {
 
+	// -- initialization of variables -- //
 	var wg sync.WaitGroup
 	
+	// -- making sure we wait for all goroutines to finish before closing the program -- //
 	defer wg.Wait()
 
+	// -- setting up the flag using format of ("name", default_value, "help value") -- //
 	servers_to_run := flag.Int("servers", 0, "int")
-	
 	flag.Parse()
 	
+	// -- initilizing the variable to print into the file and writing into the file -- //
 	data_to_file := []byte(fmt.Sprintf("%d", *servers_to_run))
 	err := os.WriteFile("balance/servers_count", data_to_file, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// -- checks the limit of servers we can start -- //
 	if *servers_to_run > 999 {
 		return
 	}
