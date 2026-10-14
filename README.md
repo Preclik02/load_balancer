@@ -109,6 +109,12 @@ so about this time I am able to code while being in high school since this is my
 
 So now on the high school break I don't have the brain capacity or time to make complex structure changing so I just went through the code and commented it all the way through with an exception of the server starting main.go I don't have the time to do that. Okay actually did all of the documenting and commenting but the break is over now. Going to push this code and comming back to it later on.
 
+Okay so after hard days of schools I am absolutely tired but I will still make this commit because I don't want to lose my streak of commits, I have got distracted a lot of times while comming up with an idea for this since it is wednesday it is almost end of the week and my sleep schedule is not covering this also this week is a lot of academic pressure in school halfway through the week after like 5 test and at least 1 more is comming at me so w ig.
+
+For this commit I have thought about making the project do the starting of each script at the same time improving the structure although the code will be now harder to test since before it was simplier kinda but it will be alright even now I assume, so for the code, the code will be pretty simple it wil accept the flags how the programs would do but they would do it one by one this one makes it into one call, after the flags are parsed than make a call on starting server program as goroutine since it will not finish
+
+I will explain this code later on I have no time now ...
+
 
 ^^ SIDE NOTES ^^
 

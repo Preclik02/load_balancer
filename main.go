@@ -1,70 +1,54 @@
-package main
+package main 
 
-import( 
+import(
 
-	"fmt"
 	"strconv"
-	"flag"
+	"fmt"
 	"log"
-	"sync"
-	"net"
-	"os"
+	"flag"
+	"os/exec"
 
 )
 
-func make_server_listen(server string, wg *sync.WaitGroup) {
-	go func() {
-		defer wg.Done()
-		listener, err := net.Listen("tcp", ":"+server)
-		if err != nil {
-			log.Printf("[+] err - %s\n", err)	
-			return
-		}
-		defer listener.Close()
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Printf("[+] err - %s\n", err)
-				continue
-			}
-			go func(c net.Conn) {
-				defer c.Close()
-				c.Write([]byte("Hello "+server))
-			}(conn)
-		}
-	}()
-}
 func main() {
 
-	// -- initialization of variables -- //
-	var wg sync.WaitGroup
+	// -- DEFINING && PREPARING FLAGS -- //
 	
-	// -- making sure we wait for all goroutines to finish before closing the program -- //
-	defer wg.Wait()
+	var servers_int int
+	var users_int int
 
-	// -- setting up the flag using format of ("name", default_value, "help value") -- //
-	servers_to_run := flag.Int("servers", 0, "int")
+	flag.IntVar(&servers_int, "servers", 0, "servers int")
+	flag.IntVar(&users_int, "users", 0, "users int")
 	flag.Parse()
+
+	servers := strconv.Itoa(servers_int)
+	users := strconv.Itoa(users_int)
+
+	// -- STARTING SERVERS -- //
+	server_startup := exec.Command("go", "run", "servers/main.go", "-servers", servers)
 	
-	// -- initilizing the variable to print into the file and writing into the file -- //
-	data_to_file := []byte(fmt.Sprintf("%d", *servers_to_run))
-	err := os.WriteFile("balance/servers_count", data_to_file, 0644)
+	err := server_startup.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	fmt.Printf("[+] PID >> %d\n", server_startup.Process)
+
+	// --  BALANCING USERS -- //
+	balance_users := exec.Command("go", "run", "balance/main.go", "-users", users)
+
+	err = balance_users.Start()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// -- checks the limit of servers we can start -- //
-	if *servers_to_run > 999 {
-		return
-	}
+	fmt.Printf("[+] PID >> %d\n", balance_users.Process)
 
-	/////////////////////////////////////
-	// -- RUN SERVERS IN A FOR LOOP -- //
-	// -- THIS MAKES THEM "DYNAMIC" -- //
-	for server_selected := 0; server_selected < *servers_to_run; server_selected++ {
-		wg.Add(1)
-		server_selected_int := 8000 + server_selected
-		make_server_listen(strconv.Itoa(server_selected_int), &wg)
-	}
+	server_startup_pid := strconv.Itoa(server_startup.Process.Pid)
+	balance_users_pid := strconv.Itoa(balance_users.Process.Pid)
+
+	defer exec.Command("pkill", server_startup_pid).Start()
+	defer exec.Command("pkill", balance_users_pid).Start()
+
 
 }
