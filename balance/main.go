@@ -82,7 +82,7 @@ func connect_user(user int, port string) {
 func main() {
 	
 	// -- reading temp file using os.ReadFile -- //
-	servers_count_temp, err := os.ReadFile("../servers_count")
+	servers_count_temp, err := os.ReadFile("servers_count")
 	if err != nil {
 		log.Fatal(err)
 	}

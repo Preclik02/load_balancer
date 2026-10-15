@@ -48,7 +48,7 @@ func main() {
 	
 	// -- initilizing the variable to print into the file and writing into the file -- //
 	data_to_file := []byte(fmt.Sprintf("%d", *servers_to_run))
-	err := os.WriteFile("../servers_count", data_to_file, 0644)
+	err := os.WriteFile("servers_count", data_to_file, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

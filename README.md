@@ -115,8 +115,19 @@ For this commit I have thought about making the project do the starting of each 
 
 I will explain this code later on I have no time now ...
 
+So the full commit yesterday was simple main.go added and one directory that contains servers starting main.go into differnet directory so the full structure changes a bit, I am strugelling with the output a bit for the main.go like main main.go but I think I will get it done in this commit. For the solution to this main.go I made simple os processes that start the server checks for error and prints its PID (process ID) than it does the same for the balancer and than prepares and makes a defer command to kill the processes at the end of the prograrm, the program has no input right now other than the PID which is the part I am kinda strugeling with rn but I think the program other than that should work still fine it might run into a logical error that the pkill is executed quicker than the main.go's tend to finish balancing but I am sure the output will fix this by waiting for the actual output of the balancer which we will print.
 
-^^ SIDE NOTES ^^
+To detaily specify the code the os import is used with those calls
+exec.Command && .Start() && .Process && .Pid
+the calls are pretty self explainatory you just have to know they are there and what types of values they expect or want. Since there is pretty much no repetetive task I think it is pretty alright for the use of no functions I have strugeled a bit with the pid but it is also kinda self explanatory where we just have to convert it Itoa (Int to ASCII) and than use it to pkill the processes after the program is finished.
+
+What we want to add now is the output, so for this I think we will remove the defer and pkill for the balance_users since it should finish in few seconds at the most, and I think the output will even than wait for the process to finish but we will se ig.
+
+So I added the output printing, how the output works is pretty simple, the code doesn't do the defer and pkil for the balance and instead the balance is started by the output, err := balance_users.Output() which makes now the output equal to bytes of the input than we can print the PID we can't do it before the output getting since it will make an error of "proces already active" or sm like that, so fter that we can convert the byte type into string using output_string = string(output) and printing it that is the easiest solution at least I think it is.
+
+So with the code done pretty early I might actually sleep early this time so job done there, but the code structure and optimalization is not ending there, the code will still be updated daily, and if not specifically this one than at least the jaylub.com one.
+
+SIDE NOTES ^^
 
 
 

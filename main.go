@@ -32,23 +32,23 @@ func main() {
 		log.Fatal(err)
 	}
 	
-	fmt.Printf("[+] PID >> %d\n", server_startup.Process)
+	fmt.Printf("[+] PID >> %d\n", server_startup.Process.Pid)
 
 	// --  BALANCING USERS -- //
 	balance_users := exec.Command("go", "run", "balance/main.go", "-users", users)
 
-	err = balance_users.Start()
+	output, err := balance_users.Output()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("[+] PID >> %d\n", balance_users.Process)
+	fmt.Printf("[+] PID >> %d\n", balance_users.Process.Pid)
+
+	output_string := string(output)
+	fmt.Println(output_string)
 
 	server_startup_pid := strconv.Itoa(server_startup.Process.Pid)
-	balance_users_pid := strconv.Itoa(balance_users.Process.Pid)
-
 	defer exec.Command("pkill", server_startup_pid).Start()
-	defer exec.Command("pkill", balance_users_pid).Start()
 
 
 }
