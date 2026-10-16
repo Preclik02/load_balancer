@@ -127,6 +127,8 @@ So I added the output printing, how the output works is pretty simple, the code 
 
 So with the code done pretty early I might actually sleep early this time so job done there, but the code structure and optimalization is not ending there, the code will still be updated daily, and if not specifically this one than at least the jaylub.com one.
 
+So for todays commit I will document the code I have made in last 2 commits, after that I will do re-search on what code structure is good to use and what structure does other programs use, than I want to find some small or bigger project that I could PR to since I kinda want to at least feel like part of something so I think this is the perfect opritunity to do something like this. Thinking about it right now (few minutes later) I think I will go to bed today so I can get more sleep then usual since it is weekend tomorrow and I need to get better from the encephalitis I had 5 months ago. Enjoy the documentation ig.
+
 SIDE NOTES ^^
 
 
